@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 30px auto;
+        max-width: 750px;
+        color: #333;
+        line-height: 1.5;
+        padding: 0 16px;
+      }
+      h2 {
+        color: #1a73e8;
+        margin-bottom: 8px;
+      }
+      .header-desc {
+        background: #f1f3f4;
+        padding: 14px;
+        border-radius: 6px;
+        margin-bottom: 24px;
+        font-size: 14px;
+      }
+      .q-block {
+        margin-bottom: 20px;
+        padding: 16px;
+        border: 1px solid #dadce0;
+        border-radius: 8px;
+      }
+      .q-title {
+        font-weight: bold;
+        margin-bottom: 12px;
+      }
+      label {
+        display: block;
+        margin-bottom: 8px;
+        cursor: pointer;
+      }
+      input[type="radio"] {
+        margin-right: 8px;
+      }
+
+      /* Question 2 Grid styling */
+      .grid-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+      }
+      .grid-table th {
+        font-weight: normal;
+        color: #5f6368;
+        padding: 10px 8px;
+        text-align: center;
+        font-size: 14px;
+      }
+      .grid-table td {
+        padding: 14px 8px;
+        text-align: center;
+        color: #5f6368;
+        font-size: 15px;
+      }
+      .grid-table td.row-label {
+        text-align: left;
+        color: #5f6368;
+        width: 25%;
+      }
+      .grid-table input[type="radio"] {
+        cursor: pointer;
+        margin: 0;
+        transform: scale(1.2);
+        accent-color: #26a6d1;
+      }
+
+      .survey-footer {
+        font-size: 13.5px;
+        color: #5f6368;
+        background: #f8f9fa;
+        border: 1px solid #e8eaed;
+        border-radius: 6px;
+        padding: 14px;
+        margin-bottom: 24px;
+        line-height: 1.6;
+      }
+
+      .btn-submit {
+        background: #1a73e8;
+        color: white;
+        border: none;
+        padding: 12px 28px;
+        font-size: 15px;
+        font-weight: bold;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .btn-submit:hover {
+        background: #1557b0;
+      }
+      #result-card {
+        display: none;
+        padding: 30px;
+        border: 1px solid #dadce0;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      }
+      .score-display {
+        font-size: 28px;
+        font-weight: bold;
+        color: #1a73e8;
+        margin-bottom: 14px;
+      }
+      .score-msg {
+        font-size: 16px;
+        color: #202124;
+        margin-bottom: 24px;
+      }
+      .footer-contact {
+        font-size: 13px;
+        color: #5f6368;
+        border-top: 1px solid #dadce0;
+        padding-top: 16px;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div id="survey-container">
+      <h2>NileNet ISP Evaluation</h2>
+      <div class="header-desc">
+        Thank you for contacting our help desk. Please help us better serve you by completing the following questionnaire:
+      </div>
+
+      <form id="evalForm" onsubmit="submitSurvey(event)">
+        <!-- Q1 -->
+        <div class="q-block">
+          <div class="q-title">1) Overall, how do you feel about your experience with NileNet as your Internet service provider?</div>
+          <label><input type="radio" name="q1" value="5" required> Excellent</label>
+          <label><input type="radio" name="q1" value="3"> Good</label>
+          <label><input type="radio" name="q1" value="1"> Poor</label>
+        </div>
+
+        <!-- Q2 Grid Matrix -->
+        <div class="q-block">
+          <div class="q-title">2) Rate the following aspects of your internet connection from NileNet</div>
+          <table class="grid-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Excellent</th>
+                <th>Very Good</th>
+                <th>Good</th>
+                <th>Fair</th>
+                <th>Poor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="row-label">Reliability</td>
+                <td><input type="radio" name="q2_rel" value="5" required></td>
+                <td><input type="radio" name="q2_rel" value="4"></td>
+                <td><input type="radio" name="q2_rel" value="3"></td>
+                <td><input type="radio" name="q2_rel" value="2"></td>
+                <td><input type="radio" name="q2_rel" value="1"></td>
+              </tr>
+              <tr>
+                <td class="row-label">Speed</td>
+                <td><input type="radio" name="q2_spd" value="5" required></td>
+                <td><input type="radio" name="q2_spd" value="4"></td>
+                <td><input type="radio" name="q2_spd" value="3"></td>
+                <td><input type="radio" name="q2_spd" value="2"></td>
+                <td><input type="radio" name="q2_spd" value="1"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Q3 -->
+        <div class="q-block">
+          <div class="q-title">3) How would you rate NileNet software for ease of installation and use?</div>
+          <label><input type="radio" name="q3" value="5" required> Excellent</label>
+          <label><input type="radio" name="q3" value="3"> Adequate</label>
+          <label><input type="radio" name="q3" value="1"> Poor</label>
+        </div>
+
+        <!-- Q4 -->
+        <div class="q-block">
+          <div class="q-title">4) For which operating system did you place your call to support?</div>
+          <label><input type="radio" name="q4" value="Windows" required> Windows</label>
+          <label><input type="radio" name="q4" value="Mac"> Mac</label>
+          <label><input type="radio" name="q4" value="Linux"> Linux</label>
+          <label><input type="radio" name="q4" value="Other"> Other</label>
+        </div>
+
+        <!-- Q5 -->
+        <div class="q-block">
+          <div class="q-title">5) When solving your problem, how would you rate the information provided?</div>
+          <label><input type="radio" name="q5" value="5" required> Well-presented and understandable</label>
+          <label><input type="radio" name="q5" value="3"> Sufficient to solve the problem</label>
+          <label><input type="radio" name="q5" value="2"> Difficult to understand</label>
+          <label><input type="radio" name="q5" value="1"> Problem not solved</label>
+        </div>
+
+        <!-- Q6 -->
+        <div class="q-block">
+          <div class="q-title">6) If you needed to contact NileNet's technical support again and were given the option to speak with this representative, would you?</div>
+          <label><input type="radio" name="q6" value="5" required> Yes</label>
+          <label><input type="radio" name="q6" value="3"> Undecided</label>
+          <label><input type="radio" name="q6" value="1"> No</label>
+        </div>
+
+        <!-- Survey End Footer Note -->
+        <div class="survey-footer">
+          Thank you for completing the survey. If you require further assistance, please send an e-mail to our head of department through your-contact@example.com<br>
+          We can also be reached at <b>1111</b>, 24 hours a day, 7 days a week.
+        </div>
+
+        <button type="submit" class="btn-submit" id="btnSubmit">Submit Survey</button>
+      </form>
+    </div>
+
+    <!-- Live Post-Submit Result -->
+    <div id="result-card">
+      <div class="score-display" id="displayScore"></div>
+      <div class="score-msg" id="displayMsg"></div>
+      <div class="footer-contact">
+        Thank you for completing the survey. If you require further assistance, please send an e-mail to our head of department through your-contact@example.com<br>
+        We can also be reached at <b>1111</b>, 24 hours a day, 7 days a week.
+      </div>
+    </div>
+
+    <script>
+      function submitSurvey(e) {
+        e.preventDefault();
+        const btn = document.getElementById('btnSubmit');
+        btn.disabled = true;
+        btn.innerText = 'Submitting...';
+
+        const formElement = document.getElementById('evalForm');
+        const formData = new FormData(formElement);
+        const formObj = {};
+
+        formData.forEach(function(value, key) {
+          formObj[key] = value;
+        });
+
+        google.script.run
+          .withSuccessHandler(function(res) {
+            document.getElementById('survey-container').style.display = 'none';
+            document.getElementById('result-card').style.display = 'block';
+            document.getElementById('displayScore').innerText = 'Total Score: ' + res.score + ' / ' + res.maxScore;
+            document.getElementById('displayMsg').innerText = res.message;
+          })
+          .withFailureHandler(function(err) {
+            btn.disabled = false;
+            btn.innerText = 'Submit Survey';
+            alert('Submission error: ' + (err.message || err));
+          })
+          .processSurvey(formObj);
+      }
+    </script>
+  </body>
+</html>

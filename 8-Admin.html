@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 30px auto;
+        max-width: 1100px;
+        color: #333;
+        padding: 0 16px;
+      }
+      h2 {
+        color: #1a73e8;
+      }
+      .pin-box {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid #dadce0;
+        max-width: 320px;
+        margin-top: 20px;
+      }
+      input[type="password"] {
+        width: 90%;
+        padding: 8px;
+        margin: 8px 0 14px 0;
+        border: 1px solid #dadce0;
+        border-radius: 4px;
+      }
+      button {
+        background: #1a73e8;
+        color: white;
+        border: none;
+        padding: 9px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #1557b0;
+      }
+      .danger-btn {
+        background: #d93025;
+        margin-left: 10px;
+      }
+      .danger-btn:hover {
+        background: #b3261e;
+      }
+      #dashboard {
+        display: none;
+        margin-top: 20px;
+      }
+      .table-wrapper {
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+        font-size: 13px;
+      }
+      th, td {
+        border: 1px solid #dadce0;
+        padding: 10px 12px;
+        text-align: left;
+      }
+      th {
+        background-color: #f1f3f4;
+        color: #202124;
+        white-space: nowrap;
+      }
+      td.score-col {
+        text-align: center;
+        white-space: nowrap;
+      }
+      .score-pill {
+        font-weight: bold;
+        padding: 4px 8px;
+        border-radius: 12px;
+      }
+      .score-high { background: #e6f4ea; color: #137333; }
+      .score-mid { background: #fef7e0; color: #b06000; }
+      .score-low { background: #fce8e6; color: #c5221f; }
+    </style>
+  </head>
+  <body>
+
+    <h2>NileNet Survey Submissions Dashboard</h2>
+
+    <div id="authBox" class="pin-box">
+      <label for="adminPin">Enter Admin PIN:</label><br>
+      <input type="password" id="adminPin" placeholder="Enter PIN">
+      <button onclick="loadData()">View Responses</button>
+    </div>
+
+    <div id="dashboard">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <span id="responseCount" style="font-weight: bold; color: #5f6368;"></span>
+        <div>
+          <button onclick="loadData()">Refresh</button>
+          <button class="danger-btn" onclick="clearData()">Clear All Data</button>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>1) Overall</th>
+              <th>2a) Reliability</th>
+              <th>2b) Speed</th>
+              <th>3) Software</th>
+              <th>4) OS</th>
+              <th>5) Problem Solving</th>
+              <th>6) Representative</th>
+              <th>Total Score</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      let currentPin = "";
+
+      function loadData() {
+        const pin = document.getElementById('adminPin').value || currentPin;
+        if (!pin) {
+          alert('Please enter PIN');
+          return;
+        }
+
+        google.script.run
+          .withSuccessHandler(function(list) {
+            currentPin = pin;
+            document.getElementById('authBox').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('responseCount').innerText = 'Total Submissions: ' + list.length;
+
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            if (list.length === 0) {
+              tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 20px;">No submissions found.</td></tr>';
+              return;
+            }
+
+            list.forEach(function(item) {
+              const tr = document.createElement('tr');
+
+              let pillClass = 'score-high';
+              if (item.score < 15) pillClass = 'score-low';
+              else if (item.score <= 21) pillClass = 'score-mid';
+
+              tr.innerHTML = `
+                <td style="white-space: nowrap;">${item.timestamp}</td>
+                <td>${item.q1}</td>
+                <td>${item.q2_rel}</td>
+                <td>${item.q2_spd}</td>
+                <td>${item.q3}</td>
+                <td>${item.q4}</td>
+                <td>${item.q5}</td>
+                <td>${item.q6}</td>
+                <td class="score-col"><span class="score-pill ${pillClass}">${item.score} / 30</span></td>
+              `;
+              tbody.appendChild(tr);
+            });
+          })
+          .withFailureHandler(function(err) {
+            alert(err.message || 'Access denied');
+          })
+          .getSubmissions(pin);
+      }
+
+      function clearData() {
+        if (!confirm('Are you sure you want to permanently clear all survey responses?')) return;
+
+        google.script.run
+          .withSuccessHandler(function() {
+            alert('All responses cleared.');
+            loadData();
+          })
+          .withFailureHandler(function(err) {
+            alert(err.message);
+          })
+          .clearSubmissions(currentPin);
+      }
+    </script>
+  </body>
+</html>
